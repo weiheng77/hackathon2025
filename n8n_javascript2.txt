@@ -1,0 +1,26 @@
+const daily = $json.forecast;  // Access the JSON from Set Node
+
+if (!daily || !daily.pm10) {
+    throw new Error("forecast data missing or malformed");
+}
+
+const days = daily.pm10.map(d => d.day);
+const pm10 = daily.pm10.map(d => d.avg);
+const pm25 = daily.pm25.map(d => d.avg);
+
+// Align UVI with PM10 days, fill missing with null
+const uvi = daily.pm10.map(d => {
+    const u = daily.uvi.find(u => u.day === d.day);
+    return u ? u.avg : null;
+});
+
+return [
+  {
+    json: {
+      days,
+      pm10,
+      pm25,
+      uvi
+    }
+  }
+];
